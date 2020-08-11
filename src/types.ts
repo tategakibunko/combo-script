@@ -104,6 +104,7 @@ export interface ActionSet extends Action {
 export type ActionTextGroup = "normal" | "info" | "warn" | "error"
 
 export interface ActionContext {
+  action: Action;
   ownerActionSet?: ActionSet;
   actionSetIndex: number;
   holdedBy?: Action;

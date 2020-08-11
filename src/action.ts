@@ -7,6 +7,7 @@ export class NopAction implements Action {
   ) { }
   get context(): ActionContext {
     return {
+      action: this,
       actionSetIndex: -1,
       children: this.children,
     };
@@ -44,6 +45,7 @@ export class PushAction implements Action {
   ) { }
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy, // never
@@ -82,6 +84,7 @@ export class PushDownAction implements Action {
   ) { }
   get context(): ActionContext {
     return {
+      action: this,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       ownerActionSet: this.ownerActionSet,
       holdedBy: this.holdedBy,
@@ -120,6 +123,7 @@ export class PushUpAction implements Action {
   ) { }
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -164,6 +168,7 @@ export class AndActions implements ActionSet {
   }
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -216,6 +221,7 @@ export class OrActions implements ActionSet {
   }
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -310,6 +316,7 @@ export class HoldAction implements Action {
 
   get context(): ActionContext {
     return {
+      action: this,
       actionSetIndex: -1,
       children: this.children,
     };
@@ -348,6 +355,7 @@ export class RotateStickAction implements Action {
   ) { }
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -388,6 +396,7 @@ export class MoveStickAction implements Action {
   ) { }
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -428,6 +437,7 @@ export class SetStickAction implements Action {
   ) { }
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -468,6 +478,7 @@ export class UnsetStickAction implements Action {
   ) { }
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -506,6 +517,7 @@ export class TouchStickAction implements Action {
   ) { }
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -545,6 +557,7 @@ export class TextAction implements Action {
   ) { }
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -585,6 +598,7 @@ export class PluginAction implements Action {
 
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -622,6 +636,7 @@ export class PluginHoldStartAction implements Action {
 
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
@@ -659,6 +674,7 @@ export class PluginHoldEndAction implements Action {
 
   get context(): ActionContext {
     return {
+      action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       holdedBy: this.holdedBy,
