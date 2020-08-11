@@ -4,8 +4,6 @@
 
 It also supports validation to prevent logically inconsistent operations(duplicate or unable button push or stick operation etc).
 
-Please check out [demo (combo-player)](https://github.com/tategakibunko/combo-player).
-
 ## Cheatsheet
 
 ### 1. Button operations
