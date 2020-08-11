@@ -1,0 +1,54 @@
+{
+  "name": "combo-script",
+  "version": "0.0.1",
+  "description": "Tiny script language to describe gamepad command input",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "make",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tategakibunko/combo-script.git"
+  },
+  "keywords": [
+    "game",
+    "gamepad",
+    "command-input",
+    "combo",
+    "script",
+    "language",
+    "compiler"
+  ],
+  "author": "Watanabe Masaki",
+  "license": "MIT",
+  "jest": {
+    "testURL": "http://localhost/",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "./tsconfig.json",
+        "diagnostics": {
+          "warnOnly": true
+        }
+      }
+    },
+    "testMatch": [
+      "**/src/**/*.test.ts"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.9",
+    "jest": "^26.2.2",
+    "jest-cli": "^26.2.2",
+    "ts-jest": "^26.1.4",
+    "typescript": "^3.9.7"
+  }
+}
