@@ -4,6 +4,12 @@
 
 It also supports validation to prevent logically inconsistent operations(duplicate or unable button push or stick operation etc).
 
+## Install
+
+```bash
+npm -i ts-combo-script
+```
+
 ## Cheatsheet
 
 ### 1. Button operations
