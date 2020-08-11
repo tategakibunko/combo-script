@@ -1,6 +1,6 @@
 # combo-script
 
-**combo-script** is light-weight and extensive script language to describe **gamepad** command input.
+**combo-script** is light-weight and extensible script language to describe **gamepad** command input.
 
 It also supports validation to prevent logically inconsistent operations(duplicate or unable button push or stick operation etc).
 
