@@ -1,5 +1,5 @@
 {
-  "name": "combo-script",
+  "name": "ts-combo-script",
   "version": "0.0.1",
   "description": "Tiny script language to describe gamepad command input",
   "main": "./dist/index.js",
