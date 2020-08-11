@@ -4,6 +4,8 @@
 
 It also supports validation to prevent logically inconsistent operations(duplicate or unable button push or stick operation etc).
 
+See [DEMO](https://tategakibunko.github.io/combo-player/).
+
 ## Install
 
 ```bash
