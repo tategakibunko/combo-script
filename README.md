@@ -30,11 +30,11 @@ Note that all button names are **case insensitive**. So you can write both `A` a
 
 Use `pushDown` or `pushUp` function to describe push-down or push-up event  separatedly.
 
-Note that function names are **case insensitive**, so you can write `pushDown` or `pushdown`.
-
 ```
 pushDown(left), pushUp(left)
 ```
+
+Note that function names are **case insensitive**, so you can write `pushDown` or `pushdown`.
 
 #### Push multiple button
 
