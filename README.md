@@ -191,7 +191,7 @@ class MyActionPlayer implements ActionPlayer {
 }
 
 // And pass your own ActionPlayer to ast.
-ast.accept(new MyActionPlayer());
+ast.acceptActionPlayer(new MyActionPlayer());
 ```
 
 
