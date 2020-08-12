@@ -24,13 +24,13 @@ If just single button name is described(for example, `A`), it means pushDown(`A`
 A
 ```
 
-> Note that all button names are **case insensitive**. So you can write both `A` and `a`.
+Note that all button names are **case insensitive**. So you can write both `A` and `a`.
 
 #### PushDown, PushUp
 
 Use `pushDown` or `pushUp` function to describe push-down or push-up event  separatedly.
 
-> Note that function names are **case insensitive**, so you can write `pushDown` or `pushdown`.
+Note that function names are **case insensitive**, so you can write `pushDown` or `pushdown`.
 
 ```
 pushDown(left), pushUp(left)
@@ -237,8 +237,4 @@ class MyActionPlayer implements ActionPlayer {
 ## License
 
 MIT
-
-
-
-
 
