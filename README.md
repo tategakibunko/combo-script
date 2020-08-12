@@ -161,9 +161,9 @@ info("this is info"), warn("this is warning"), error("this is error")
 
 ```typescript
 import { compile } from 'combo-script'
-const { ast, validation } = compile("(a, b){ rotateL(0, 90), L1 }, x, y");
+const { ast, errors } = compile("(a, b){ rotateL(0, 90), L1 }, x, y");
 console.log(ast);
-console.log(validation);
+console.log(errors);
 ```
 
 
@@ -176,9 +176,9 @@ Although we have [combo-player](https://github.com/tategakibunko/combo-player) a
 import { compile, Action, ActionTextGroup, ActionContext, ActionPlayer, ButtonName, StickName } from 'combo-script';
 
 const code = "(a, b) { rotateL(90, 180), up, down }, x, y, (left, a)"
-const { ast, validation } = compile(code);
-if(validation.errors.length > 0){
-  console.error(validation.errors);
+const { ast, errors } = compile(code);
+if(errors.length > 0){
+  console.error(errors);
   return;
 }
 // Implement your own ActionPlayer interface.
