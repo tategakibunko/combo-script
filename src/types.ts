@@ -89,8 +89,8 @@ export interface Action {
   children: Action[];
   context: ActionContext;
   clone: () => Action;
-  asHoldStart: (children: Action[]) => Action;
-  asHoldEnd: (children: Action[]) => Action;
+  asHoldStart: (holder: Action, children: Action[]) => Action;
+  asHoldEnd: (holder: Action, children: Action[]) => Action;
   toString: () => string;
   acceptMapper: <T>(visitor: ActionMapper<T>) => T;
   acceptPlayer: (visitor: ActionPlayer) => Promise<any>;

@@ -15,10 +15,10 @@ export class NopAction implements Action {
   clone(): Action {
     return this;
   }
-  asHoldStart(children: Action[]): Action {
+  asHoldStart(holder: Action, children: Action[]): Action {
     return this;
   }
-  asHoldEnd(children: Action[]): Action {
+  asHoldEnd(holder: Action, children: Action[]): Action {
     return this;
   }
   toString(): string {
@@ -55,11 +55,11 @@ export class PushAction implements Action {
   clone(): PushAction {
     return new PushAction(this.target, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): PushDownAction {
-    return new PushDownAction(this.target, this.ownerActionSet, children, this.holdedBy);
+  asHoldStart(holder: Action, children: Action[]): PushDownAction {
+    return new PushDownAction(this.target, this.ownerActionSet, children, holder);
   }
-  asHoldEnd(children: Action[]): PushUpAction {
-    return new PushUpAction(this.target, this.ownerActionSet, children, this.holdedBy);
+  asHoldEnd(holder: Action, children: Action[]): PushUpAction {
+    return new PushUpAction(this.target, this.ownerActionSet, children, holder);
   }
   toString(): string {
     return this.target;
@@ -94,11 +94,11 @@ export class PushDownAction implements Action {
   clone(): PushDownAction {
     return new PushDownAction(this.target, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
-    return new PushDownAction(this.target, this.ownerActionSet, children, this.holdedBy);
+  asHoldStart(holder: Action, children: Action[]): Action {
+    return new PushDownAction(this.target, this.ownerActionSet, children, holder);
   }
-  asHoldEnd(children: Action[]): Action {
-    return new PushUpAction(this.target, this.ownerActionSet, children, this.holdedBy);
+  asHoldEnd(holder: Action, children: Action[]): Action {
+    return new PushUpAction(this.target, this.ownerActionSet, children, holder);
   }
   toString(): string {
     return `pushDown(${this.target})`;
@@ -133,11 +133,11 @@ export class PushUpAction implements Action {
   clone(): PushUpAction {
     return new PushUpAction(this.target, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
+  asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error(`${this.toString()} is not holdable action.`);
   }
-  asHoldEnd(children: Action[]): Action {
-    return new PushUpAction(this.target, this.ownerActionSet, children, this.holdedBy);
+  asHoldEnd(holder: Action, children: Action[]): Action {
+    return new PushUpAction(this.target, this.ownerActionSet, children, holder);
   }
   toString(): string {
     return `pushUp(${this.target})`;
@@ -178,11 +178,11 @@ export class AndActions implements ActionSet {
   clone(): AndActions {
     return this; // TODO
   }
-  asHoldStart(children: Action[]): Action {
-    return new AndActions(this.actions.map(action => action.asHoldStart(children)), this.ownerActionSet, children, this.holdedBy);
+  asHoldStart(holder: Action, children: Action[]): Action {
+    return new AndActions(this.actions.map(action => action.asHoldStart(holder, children)), this.ownerActionSet, children, holder);
   }
-  asHoldEnd(children: Action[]): Action {
-    return new AndActions(this.actions.map(action => action.asHoldEnd(children)), this.ownerActionSet, children, this.holdedBy);
+  asHoldEnd(holder: Action, children: Action[]): Action {
+    return new AndActions(this.actions.map(action => action.asHoldEnd(holder, children)), this.ownerActionSet, children, holder);
   }
   toString(): string {
     const childActions = this.actions.map(a => a.toString()).join(",");
@@ -278,8 +278,8 @@ export class OrActions implements ActionSet {
       this.ownerActionSet ? this.ownerActionSet.holdedBy : undefined,
     );
   }
-  asHoldStart(children: Action[]): Action {
-    return new OrActions(this.actions.map(action => action.asHoldStart(children)), this.ownerActionSet, children, this.holdedBy);
+  asHoldStart(holder: Action, children: Action[]): Action {
+    return new OrActions(this.actions.map(action => action.asHoldStart(holder, children)), this.ownerActionSet, children, holder);
     /*
     // (a or b){ children } => a { children } or b { children }
     return new OrActions(this.actions.map(action => {
@@ -287,9 +287,9 @@ export class OrActions implements ActionSet {
     }), this.ownerActionSet, this.children, this.holdedBy);
     */
   }
-  asHoldEnd(children: Action[]): Action {
+  asHoldEnd(holder: Action, children: Action[]): Action {
     // return NopAction.instance;
-    return new OrActions(this.actions.map(action => action.asHoldEnd(children)), this.ownerActionSet, children, this.holdedBy);
+    return new OrActions(this.actions.map(action => action.asHoldEnd(holder, children)), this.ownerActionSet, children, holder);
   }
   toString(): string {
     const childActions = this.actions.map(a => a.toString()).join(",");
@@ -324,10 +324,10 @@ export class HoldAction implements Action {
   clone(): HoldAction {
     return this;
   }
-  asHoldStart(children: Action[]): Action {
+  asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error("Duplicate hold(start) is not allowed.");
   }
-  asHoldEnd(children: Action[]): Action {
+  asHoldEnd(holder: Action, children: Action[]): Action {
     throw new Error("Duplicate hold(end) is not allowed.");
   }
   toString(): string {
@@ -365,10 +365,10 @@ export class RotateStickAction implements Action {
   clone(): RotateStickAction {
     return new RotateStickAction(this.target, this.fromAngle, this.toAngle, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
+  asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error(`${this.toString()} is not holdable action.`);
   }
-  asHoldEnd(children: Action[]): Action {
+  asHoldEnd(holder: Action, children: Action[]): Action {
     return NopAction.instance;
   }
   toString(): string {
@@ -406,10 +406,10 @@ export class MoveStickAction implements Action {
   clone(): MoveStickAction {
     return new MoveStickAction(this.target, this.fromAngle, this.toAngle, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
+  asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error(`${this.toString()} is not holdable action.`);
   }
-  asHoldEnd(children: Action[]): Action {
+  asHoldEnd(holder: Action, children: Action[]): Action {
     return NopAction.instance;
   }
   toString(): string {
@@ -447,11 +447,11 @@ export class SetStickAction implements Action {
   clone(): SetStickAction {
     return new SetStickAction(this.target, this.toAngle, this.isHolding, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
-    return new SetStickAction(this.target, this.toAngle, true, this.ownerActionSet, children);
+  asHoldStart(holder: Action, children: Action[]): Action {
+    return new SetStickAction(this.target, this.toAngle, true, this.ownerActionSet, children, holder);
   }
-  asHoldEnd(children: Action[]): Action {
-    return new UnsetStickAction(this.target, this.toAngle, this.ownerActionSet, children);
+  asHoldEnd(holder: Action, children: Action[]): Action {
+    return new UnsetStickAction(this.target, this.toAngle, this.ownerActionSet, children, holder);
   }
   toString(): string {
     return `set(${this.target}, ${this.toAngle}, isHolding = ${this.isHolding})`;
@@ -488,10 +488,10 @@ export class UnsetStickAction implements Action {
   clone(): UnsetStickAction {
     return new UnsetStickAction(this.target, this.fromAngle, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
+  asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error(`${this.toString()} is not holdable action.`);
   }
-  asHoldEnd(children: Action[]): Action {
+  asHoldEnd(holder: Action, children: Action[]): Action {
     return NopAction.instance;
   }
   toString(): string {
@@ -527,11 +527,11 @@ export class TouchStickAction implements Action {
   clone(): TouchStickAction {
     return new TouchStickAction(this.target, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
-    return new TouchStickAction(this.target, this.ownerActionSet, children);
+  asHoldStart(holder: Action, children: Action[]): Action {
+    return new TouchStickAction(this.target, this.ownerActionSet, children, holder);
   }
-  asHoldEnd(children: Action[]): Action {
-    return new UnsetStickAction(this.target, 0, this.ownerActionSet, children);
+  asHoldEnd(holder: Action, children: Action[]): Action {
+    return new UnsetStickAction(this.target, 0, this.ownerActionSet, children, holder);
   }
   toString(): string {
     return `touch(${this.target})`;
@@ -567,10 +567,10 @@ export class TextAction implements Action {
   clone(): TextAction {
     return new TextAction(this.text, this.group, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
-    return new TextAction(this.text, this.group, this.ownerActionSet, children);
+  asHoldStart(holder: Action, children: Action[]): Action {
+    return new TextAction(this.text, this.group, this.ownerActionSet, children, holder);
   }
-  asHoldEnd(children: Action[]): Action {
+  asHoldEnd(holder: Action, children: Action[]): Action {
     return NopAction.instance;
   }
   toString(): string {
@@ -608,11 +608,11 @@ export class PluginAction implements Action {
   clone(): PluginAction {
     return new PluginAction(this.name, this.args, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
-    return new PluginHoldStartAction(this.name, this.args, this.ownerActionSet, children);
+  asHoldStart(holder: Action, children: Action[]): Action {
+    return new PluginHoldStartAction(this.name, this.args, this.ownerActionSet, children, holder);
   }
-  asHoldEnd(children: Action[]): Action {
-    return new PluginHoldEndAction(this.name, this.args, this.ownerActionSet, children);
+  asHoldEnd(holder: Action, children: Action[]): Action {
+    return new PluginHoldEndAction(this.name, this.args, this.ownerActionSet, children, holder);
   }
   acceptMapper<T>(mapper: ActionMapper<T>): T {
     return mapper.visit(this);
@@ -646,11 +646,11 @@ export class PluginHoldStartAction implements Action {
   clone(): PluginHoldStartAction {
     return new PluginHoldStartAction(this.name, this.args, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
-    return new PluginHoldStartAction(this.name, this.args, this.ownerActionSet, children);
+  asHoldStart(holder: Action, children: Action[]): Action {
+    return new PluginHoldStartAction(this.name, this.args, this.ownerActionSet, children, holder);
   }
-  asHoldEnd(children: Action[]): Action {
-    return new PluginHoldEndAction(this.name, this.args, this.ownerActionSet, children);
+  asHoldEnd(holder: Action, children: Action[]): Action {
+    return new PluginHoldEndAction(this.name, this.args, this.ownerActionSet, children, holder);
   }
   acceptMapper<T>(mapper: ActionMapper<T>): T {
     return mapper.visit(this);
@@ -684,10 +684,10 @@ export class PluginHoldEndAction implements Action {
   clone(): PluginHoldEndAction {
     return new PluginHoldEndAction(this.name, this.args, this.ownerActionSet, this.children, this.holdedBy);
   }
-  asHoldStart(children: Action[]): Action {
+  asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error(`PluginHoldEndAction is not holdable!`)
   }
-  asHoldEnd(children: Action[]): Action {
+  asHoldEnd(holder: Action, children: Action[]): Action {
     return this;
   }
   acceptMapper<T>(mapper: ActionMapper<T>): T {

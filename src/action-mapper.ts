@@ -88,13 +88,12 @@ export class FilterNopAction implements ActionMapper<Action[]> {
 export class ExtractHoldAction implements ActionMapper<Action[]> {
   visit(action: Action): Action[] {
     if (action instanceof HoldAction) {
-      const holdedAction = action.action;
+      const holder = action.action;
       const children = action.children;
-      children.forEach(child => child.holdedBy = holdedAction)
       if (children.some(child => child instanceof HoldAction)) {
         throw new Error("recursive holding syntax is not allowed!");
       }
-      return [holdedAction.asHoldStart(children)].concat(children).concat(holdedAction.asHoldEnd(children));
+      return [holder.asHoldStart(holder, children)].concat(children).concat(holder.asHoldEnd(holder, children));
     }
     return [action];
   }
