@@ -12,7 +12,7 @@ export function compilePlainAst(source: string): Ast {
 
 // Create special ast for debug(all holding OrActions are branched).
 // [example]
-// or(a,b){x} => [[a{x}] [b{x}]]
+// or(a,b){x} => [[a{x}], [b{x}]]
 // or(a,b),x  => [[a,x], [b,x]]
 export function createDebugBranch(plainAst: Ast): Ast[] {
   return plainAst
