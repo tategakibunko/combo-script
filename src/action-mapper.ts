@@ -62,7 +62,7 @@ export class FlattenActionSet implements ActionMapper<Action[]> {
         // inherit binding from original ActionSet.
         singleAction.children = action.children;
         singleAction.ownerActionSet = action.ownerActionSet;
-        singleAction.holdedBy = action.holdedBy;
+        singleAction.holder = action.holder;
 
         return [singleAction];
       }

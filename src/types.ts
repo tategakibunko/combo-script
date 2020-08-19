@@ -85,7 +85,7 @@ export interface Ast {
 
 export interface Action {
   ownerActionSet?: ActionSet; // ownerActionSet
-  holdedBy?: Action;
+  holder?: Action;
   children: Action[];
   context: ActionContext;
   clone: () => Action;
@@ -107,7 +107,7 @@ export interface ActionContext {
   action: Action;
   ownerActionSet?: ActionSet;
   actionSetIndex: number;
-  holdedBy?: Action;
+  holder?: Action;
   children: Action[];
 }
 

@@ -41,19 +41,19 @@ export class PushAction implements Action {
     public target: ButtonName,
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
   get context(): ActionContext {
     return {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy, // never
+      holder: this.holder, // never
       children: this.children,
     };
   }
   clone(): PushAction {
-    return new PushAction(this.target, this.ownerActionSet, this.children, this.holdedBy);
+    return new PushAction(this.target, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): PushDownAction {
     return new PushDownAction(this.target, this.ownerActionSet, children, holder);
@@ -80,19 +80,19 @@ export class PushDownAction implements Action {
     public target: ButtonName,
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
   get context(): ActionContext {
     return {
       action: this,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
       ownerActionSet: this.ownerActionSet,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): PushDownAction {
-    return new PushDownAction(this.target, this.ownerActionSet, this.children, this.holdedBy);
+    return new PushDownAction(this.target, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     return new PushDownAction(this.target, this.ownerActionSet, children, holder);
@@ -119,19 +119,19 @@ export class PushUpAction implements Action {
     public target: ButtonName,
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
   get context(): ActionContext {
     return {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): PushUpAction {
-    return new PushUpAction(this.target, this.ownerActionSet, this.children, this.holdedBy);
+    return new PushUpAction(this.target, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error(`${this.toString()} is not holdable action.`);
@@ -158,7 +158,7 @@ export class AndActions implements ActionSet {
     public actions: Action[],
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) {
     // AndActions([a, b, AndActions([x, y])]) => AndActions([a, b, x, y])
     this.actions = this.actions.reduce((acm, action) => {
@@ -171,7 +171,7 @@ export class AndActions implements ActionSet {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
@@ -211,7 +211,7 @@ export class OrActions implements ActionSet {
     public actions: Action[],
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) {
     // OrActions([a, b, OrActions([x, y])]) => OrActions([a, b, x, y])
     this.actions = this.actions.reduce((acm, action) => {
@@ -224,7 +224,7 @@ export class OrActions implements ActionSet {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
@@ -252,7 +252,7 @@ export class OrActions implements ActionSet {
       this.actions.map(act => new AndActions([act, action])),
       this.ownerActionSet ? this.ownerActionSet.ownerActionSet : undefined,
       this.ownerActionSet ? this.ownerActionSet.children : [],
-      this.ownerActionSet ? this.ownerActionSet.holdedBy : undefined,
+      this.ownerActionSet ? this.ownerActionSet.holder : undefined,
     );
   }
   // (A or B) and (C and D) = (A and C and D) or (B and C and D)
@@ -261,7 +261,7 @@ export class OrActions implements ActionSet {
       this.actions.map(act => new AndActions([act].concat(action.actions))),
       this.ownerActionSet ? this.ownerActionSet.ownerActionSet : undefined,
       this.ownerActionSet ? this.ownerActionSet.children : [],
-      this.ownerActionSet ? this.ownerActionSet.holdedBy : undefined,
+      this.ownerActionSet ? this.ownerActionSet.holder : undefined,
     );
   }
   // (A or B) and (C or D) = (A and C) or (A and D) or (B and C) or (B and D)
@@ -275,7 +275,7 @@ export class OrActions implements ActionSet {
       }, [] as AndActions[]),
       this.ownerActionSet ? this.ownerActionSet.ownerActionSet : undefined,
       this.ownerActionSet ? this.ownerActionSet.children : [],
-      this.ownerActionSet ? this.ownerActionSet.holdedBy : undefined,
+      this.ownerActionSet ? this.ownerActionSet.holder : undefined,
     );
   }
   asHoldStart(holder: Action, children: Action[]): Action {
@@ -284,7 +284,7 @@ export class OrActions implements ActionSet {
     // (a or b){ children } => a { children } or b { children }
     return new OrActions(this.actions.map(action => {
       return new HoldAction(action, children);
-    }), this.ownerActionSet, this.children, this.holdedBy);
+    }), this.ownerActionSet, this.children, this.holder);
     */
   }
   asHoldEnd(holder: Action, children: Action[]): Action {
@@ -351,19 +351,19 @@ export class RotateStickAction implements Action {
     public toAngle: number,
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
   get context(): ActionContext {
     return {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): RotateStickAction {
-    return new RotateStickAction(this.target, this.fromAngle, this.toAngle, this.ownerActionSet, this.children, this.holdedBy);
+    return new RotateStickAction(this.target, this.fromAngle, this.toAngle, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error(`${this.toString()} is not holdable action.`);
@@ -392,19 +392,19 @@ export class MoveStickAction implements Action {
     public toAngle: number,
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
   get context(): ActionContext {
     return {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): MoveStickAction {
-    return new MoveStickAction(this.target, this.fromAngle, this.toAngle, this.ownerActionSet, this.children, this.holdedBy);
+    return new MoveStickAction(this.target, this.fromAngle, this.toAngle, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error(`${this.toString()} is not holdable action.`);
@@ -433,19 +433,19 @@ export class SetStickAction implements Action {
     public isHolding = false,
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
   get context(): ActionContext {
     return {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): SetStickAction {
-    return new SetStickAction(this.target, this.toAngle, this.isHolding, this.ownerActionSet, this.children, this.holdedBy);
+    return new SetStickAction(this.target, this.toAngle, this.isHolding, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     return new SetStickAction(this.target, this.toAngle, true, this.ownerActionSet, children, holder);
@@ -474,19 +474,19 @@ export class UnsetStickAction implements Action {
     public fromAngle: number,
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
   get context(): ActionContext {
     return {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): UnsetStickAction {
-    return new UnsetStickAction(this.target, this.fromAngle, this.ownerActionSet, this.children, this.holdedBy);
+    return new UnsetStickAction(this.target, this.fromAngle, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error(`${this.toString()} is not holdable action.`);
@@ -513,19 +513,19 @@ export class TouchStickAction implements Action {
     public target: StickName,
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
   get context(): ActionContext {
     return {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): TouchStickAction {
-    return new TouchStickAction(this.target, this.ownerActionSet, this.children, this.holdedBy);
+    return new TouchStickAction(this.target, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     return new TouchStickAction(this.target, this.ownerActionSet, children, holder);
@@ -553,19 +553,19 @@ export class TextAction implements Action {
     public group: ActionTextGroup,
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
   get context(): ActionContext {
     return {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): TextAction {
-    return new TextAction(this.text, this.group, this.ownerActionSet, this.children, this.holdedBy);
+    return new TextAction(this.text, this.group, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     return new TextAction(this.text, this.group, this.ownerActionSet, children, holder);
@@ -593,7 +593,7 @@ export class PluginAction implements Action {
     public args: string[],
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
 
   get context(): ActionContext {
@@ -601,12 +601,12 @@ export class PluginAction implements Action {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): PluginAction {
-    return new PluginAction(this.name, this.args, this.ownerActionSet, this.children, this.holdedBy);
+    return new PluginAction(this.name, this.args, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     return new PluginHoldStartAction(this.name, this.args, this.ownerActionSet, children, holder);
@@ -631,7 +631,7 @@ export class PluginHoldStartAction implements Action {
     public args: string[],
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
 
   get context(): ActionContext {
@@ -639,12 +639,12 @@ export class PluginHoldStartAction implements Action {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): PluginHoldStartAction {
-    return new PluginHoldStartAction(this.name, this.args, this.ownerActionSet, this.children, this.holdedBy);
+    return new PluginHoldStartAction(this.name, this.args, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     return new PluginHoldStartAction(this.name, this.args, this.ownerActionSet, children, holder);
@@ -669,7 +669,7 @@ export class PluginHoldEndAction implements Action {
     public args: string[],
     public ownerActionSet: ActionSet | undefined = undefined,
     public children: Action[] = [],
-    public holdedBy: Action | undefined = undefined,
+    public holder: Action | undefined = undefined,
   ) { }
 
   get context(): ActionContext {
@@ -677,12 +677,12 @@ export class PluginHoldEndAction implements Action {
       action: this,
       ownerActionSet: this.ownerActionSet,
       actionSetIndex: this.ownerActionSet ? this.ownerActionSet.actions.indexOf(this) : -1,
-      holdedBy: this.holdedBy,
+      holder: this.holder,
       children: this.children,
     };
   }
   clone(): PluginHoldEndAction {
-    return new PluginHoldEndAction(this.name, this.args, this.ownerActionSet, this.children, this.holdedBy);
+    return new PluginHoldEndAction(this.name, this.args, this.ownerActionSet, this.children, this.holder);
   }
   asHoldStart(holder: Action, children: Action[]): Action {
     throw new Error(`PluginHoldEndAction is not holdable!`)
